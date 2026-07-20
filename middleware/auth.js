@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
 
+const secret = process.env.JWT_SECRET || 'your-secret-key';
+
 const auth = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ message: 'No token, authorization denied' });
   }
   try {
-    const decoded = jwt.verify(token, 'your-secret-key');
+    const decoded = jwt.verify(token, secret);
     req.userId = decoded.userId;
     next();
   } catch (error) {
