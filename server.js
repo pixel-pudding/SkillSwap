@@ -5,13 +5,20 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ strict: false }));
 
-mongoose.connect('mongodb+srv://aditianand_db_user:<db_password>@cluster0.yrbh5ay.mongodb.net/?appName=Cluster0' , {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+const mongoUri = process.env.MONGO_URI;
+
+console.log('MONGO_URI length:', mongoUri?.length);
+console.log('MONGO_URI preview:', mongoUri?.replace(/:([^:@]+)@/, ':***@'));
+
+mongoose.connect(mongoUri)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err.message));
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
@@ -21,6 +28,7 @@ app.use('/', authRoutes);
 app.use('/', profileRoutes);
 app.use('/', messageRoutes);
 
-app.listen(5006, () => {
-  console.log('Server running on port 5006');
+const PORT = process.env.PORT || 5006;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
