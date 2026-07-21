@@ -3,19 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 5006;
-const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/skillswap';
 
 app.use(cors());
-app.use(express.json({ strict: false }));
+app.use(express.json());
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
-
-mongoose.connect(mongoUri)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err.message));
+mongoose.connect('mongodb+srv://aditianand_db_user:<db_password>@cluster0.yrbh5ay.mongodb.net/?appName=Cluster0' , {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
@@ -25,6 +21,6 @@ app.use('/', authRoutes);
 app.use('/', profileRoutes);
 app.use('/', messageRoutes);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(5006, () => {
+  console.log('Server running on port 5006');
 });

@@ -6,6 +6,10 @@ const Messages = ({ setView, selectedReceiver }) => {
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef(null);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const fetchMessages = useCallback(async () => {
     const token = localStorage.getItem('token');
     if (!token || !selectedReceiver?.id) return;
@@ -32,10 +36,6 @@ const Messages = ({ setView, selectedReceiver }) => {
       return () => clearInterval(interval);
     }
   }, [selectedReceiver?.id, fetchMessages]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   const handleSend = async () => {
     if (!message.trim() || !selectedReceiver) return;
